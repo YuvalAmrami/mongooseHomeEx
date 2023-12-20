@@ -35,6 +35,7 @@ def findNumberOfUsedLosingCards(card, sortedKnownCards): # all the cards that ar
     return indexOfCard # because it is sorted all smaller that crd will be to the left of it
 
 
+# full game:
 usedCards =[]
 deckA, deckB, usedCards = deal2DeacksOf10(usedCards)
 playerAPoints = 0 
