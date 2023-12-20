@@ -11,7 +11,7 @@ def dealCards(numOfCards2Deal,usedCardsInDeck):
     while (i <numOfCards2Deal):
         cardNum = random.randint(2,14) # an ase is represented by 14
         cardColor = random.randint(1,4) # Heart, Diamonds, Clubs, Spades
-        card = {cardNum,cardColor}
+        card = [cardNum,cardColor]
         if not(card in usedCardsInDeck):
             DeltCards.append(card)
             usedCardsInDeck.append(card)
@@ -34,22 +34,26 @@ def findNumberOfUsedLosingCards(card, sortedKnownCards): # all the cards that ar
         indexOfCard = indexOfCard-1
     return indexOfCard # because it is sorted all smaller that crd will be to the left of it
 
+
 usedCards =[]
 deckA, deckB, usedCards = deal2DeacksOf10(usedCards)
 playerAPoints = 0 
 playerBPoints = 0 
-knownCards = deckA.sort()
+knownCards = list(deckA)
+knownCards.sort()
 print("deckA ", deckA)
 print("deckB ", deckB)
 print("usedCardsInDeck ", usedCards)
-print("knownCards ", knownCards)
 
 for i in range(len(deckA)):
     card = deckA.pop()
     print("card: ", card)
-    print("win percentage for current card: ", winChancePercentage(card,knownCards))
+    print("win percentage for current card: ", round(winChancePercentage(card,knownCards),2),"%")
     BCard = deckB.pop()
     print("B card: ", BCard)
+    knownCards.append(BCard)
+    knownCards.sort()
+    # print("knownCards ", knownCards)
     if (card[0]>BCard[0]):
         playerAPoints = playerAPoints +1
         print("player A win this round")
@@ -57,8 +61,8 @@ for i in range(len(deckA)):
         playerBPoints = playerBPoints +1
         print("player B win this round")
 if (playerAPoints>playerBPoints):
-    print("player A win this round")
+    print("player A win the game")
 elif (playerAPoints<playerBPoints):
-    print("player B win this round")
+    print("player B win the game")
 else:    
     print("it's a tie")
