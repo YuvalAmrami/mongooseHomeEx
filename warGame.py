@@ -67,3 +67,44 @@ elif (playerAPoints<playerBPoints):
     print("player B win the game")
 else:    
     print("it's a tie")
+
+
+
+########################################################################################  tests  ####################################################################
+
+# def test1():
+#     knownCards =[[14,1]]
+#     return (round(winChancePercentage([14,1],knownCards),2)==94.12)
+
+# def test2():
+#     knownCards =[[2,1]]
+#     return (round(winChancePercentage([2,1],knownCards),2)==0)
+
+# def test3():
+#     knownCards =[[14,3]]
+#     return (round(winChancePercentage([14,3],knownCards),2)==94.12)
+
+# def test4():
+#     knownCards =[[14,2],[14,3]]
+#     return (round(winChancePercentage([14,2],knownCards),2)==96)
+
+# def test5():
+#     knownCards =[[14,1],[14,2],[14,3],[14,4]]
+#     return (round(winChancePercentage([14,2],knownCards),2)==100)
+
+# def test6():
+#     knownCards =[[14,1],[14,2],[14,3]]
+#     return (round(winChancePercentage([14,2],knownCards),2)==97.96)
+
+# def test7():
+#     knownCards =[[13,2],[14,3]] # unknown Card:50 out of them 47 will loss to ase of Clubs
+#     return (round(winChancePercentage([14,3],knownCards),2)==94)
+
+
+# print(test1())
+# print(test2())
+# print(test3())
+# print(test4())
+# print(test5())
+# print(test6())
+# print(test7())
