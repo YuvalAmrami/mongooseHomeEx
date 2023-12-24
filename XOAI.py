@@ -5,7 +5,6 @@ def isOpen(board,rowNum,lineNum):
         return False
 
 def updateboardAIInfo(RowNum,LineNum,playerOrAi, rows, lines, diagonals): # player is -1 Ai is +1
-    print("updateboardAIInfo: ", playerOrAi)
     rows[RowNum] = rows[RowNum] + playerOrAi
     lines[LineNum] = lines[LineNum] + playerOrAi
     if (RowNum == LineNum): # left diagonal
@@ -13,40 +12,20 @@ def updateboardAIInfo(RowNum,LineNum,playerOrAi, rows, lines, diagonals): # play
     if(RowNum +LineNum ==2): # right diagonal
         diagonals[1] = diagonals[1] + playerOrAi
 
-def calculateStep(board, rows, lines, diagonals): #    return AIRow, AILine
-    print("calculateStep: ")
-    # wining next round
-    for idx, diagonal in enumerate(diagonals):
-        if (diagonal >=2):
-            return findEmptyPointOnDgnl(board,idx)
-    for idx, row in enumerate(rows):
-        if (row >=2):
-            return idx, findEmptyLine(board,idx)
-    for idx, line in enumerate(lines):
-        if (line >=2):
-            return findEmptyRow(board,idx) ,idx
-    print("calculateStep no win")
-    # prevent player's Win:
-    for idx, diagonal in enumerate(diagonals):
-        if (diagonal <=-2):
-            return findEmptyPointOnDgnl(board,idx)
-    for idx, row in enumerate(rows):
-        if (row <=-2):
-            return idx, findEmptyLine(board,idx)
-    for idx, line in enumerate(lines):
-        if (line <=-2):
-            return findEmptyRow(board,idx) ,idx
-        print("calculateStep no lose")
-    # normal play naive approach: center, corners, and finally sides
-    if isOpen(board,1,1):
-        print("center")
 
-        return 1,1
-    else:
-        row, line = findEmptyCorner(board)
-        if (row<0 or line<0):
-            row, line = findEmptySides(board)
-        
+def calculateStep(board, rows, lines, diagonals): # return AIRow, AILine
+    # wining next round or prevent player's Win:
+    for idx, diagonal in enumerate(diagonals):
+        if (diagonal >=2 or diagonal <=-2):
+            return findEmptyPointOnDgnl(board,idx)
+    for idx, row in enumerate(rows):
+        if (row >=2 or row <=-2):
+            return idx, findEmptyLine(board,idx)
+    for idx, line in enumerate(lines):
+        if (line >=2 or line <=-2):
+            return findEmptyRow(board,idx) ,idx
+    # normal play naive approach: center, corners, and finally sides
+    return normalPlay(board)
 
 def findEmptyPointOnDgnl(board, idx):
     if (idx ==0):
@@ -54,15 +33,19 @@ def findEmptyPointOnDgnl(board, idx):
             return 0,0
         elif isOpen(board,1,1):
             return 1,1
-        else: #if isOpen(board,2,2)  - unless the board is already a losing board.
+        elif isOpen(board,2,2):
             return 2,2
+        else:  # the board is already finished
+            return -1,-1
     else:
         if isOpen(board,0,2):
             return 0,2
         elif isOpen(board,1,1):
             return 1,1
-        else: #if isOpen(board,2,0)  - unless the board is already a losing board.
+        elif isOpen(board,2,0):
             return 2,0
+        else:  # the board is already finished
+            return -1,-1
 
 def findEmptyLine(board,idx):
     for i in range(len(board[0])):
@@ -77,6 +60,7 @@ def findEmptyRow(board,idx):
     return -1
 
 def findEmptyCorner(board):
+    # print ('findEmptyCorner')
     if isOpen(board,0,0):
         return 0,0
     elif isOpen(board,0,2):
@@ -88,7 +72,7 @@ def findEmptyCorner(board):
     else:
         return -1, -1
 
-def findEmptySides(board):
+def findEmptySide(board):
     if isOpen(board,0,1):
         return 0,1
     elif isOpen(board,1,0):
@@ -98,8 +82,21 @@ def findEmptySides(board):
     elif isOpen(board,2,1):
         return 2,1
     else:
+        # print ('findEmptyCorner -1,1')
         return -1, -1   
 
+def normalPlay(board):
+    if isOpen(board,1,1):
+        print("center")
+        return 1,1
+    else:
+        print("Corner")
+        row, line = findEmptyCorner(board)
+        if (row<0 or line<0):
+            print("Side")
+            row, line = findEmptySide(board)
+        else:
+            return row, line
 
 def playRound(board, playerInput, rows, lines, diagonals):
     rowNum = int(playerInput[0])
@@ -111,9 +108,10 @@ def playRound(board, playerInput, rows, lines, diagonals):
         printBoard(board)
         updateboardAIInfo(rowNum,lineNum ,-1, rows, lines, diagonals) 
         AIRow, AILine = calculateStep(board, rows, lines, diagonals)
+        print("AIRow, AILine ", AIRow, AILine)
         if (AIRow>=0 and AILine>=0):
             board[AIRow][AILine] = 1
-            updateboardAIInfo(rowNum,lineNum ,1, rows, lines, diagonals)
+            updateboardAIInfo(AIRow,AILine ,1, rows, lines, diagonals)
             printBoard(board)
             return 1
         else:
@@ -128,17 +126,28 @@ def printBoard(board):
     for row in board:
         print(row)
 
+def gameEnded(rows, lines, diagonals):
+    for diagonal in diagonals:
+        if (diagonal >=3 or diagonal <=-3):
+            return True
+    for row in rows:
+        if (row >=3 or row <=-3):
+            return True
+    for line in lines:
+        if (line >=3 or line <=-3):
+            return True
+    else:
+        return False
 
 
-board = [[0,0,0]]*3
+board = [[0,0,0],[0,0,0],[0,0,0]]
 rows = [0,0,0]
 lines = [0,0,0]
 diagonals = [0,0]
 
 printBoard(board)
 playerMove = input("Enter your next move (row,line): ").split(",")
-# print("playerMove",playerMove)
-# playerInput = map(lambda num : int(num),playerMove)
-# print(playerMove,playerInput)
-while (playRound(board, playerMove, rows, lines, diagonals)!=0):
+
+while (playRound(board, playerMove, rows, lines, diagonals)!=0 and not gameEnded(rows, lines, diagonals) ):
     playerMove = input("Enter your next move (row,line): ").split(",")
+print("game ended")
