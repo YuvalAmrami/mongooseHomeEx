@@ -25,7 +25,7 @@ def calculateStep(board, rows, lines, diagonals): # return AIRow, AILine
         if (line >=2 or line <=-2):
             return findEmptyRow(board,idx) ,idx
     # normal play naive approach: center, corners, and finally sides
-    return normalPlay(board)
+    return strategicPlay(board,diagonals)
 
 def findEmptyPointOnDgnl(board, idx):
     if (idx ==0):
@@ -82,10 +82,9 @@ def findEmptySide(board):
     elif isOpen(board,2,1):
         return 2,1
     else:
-        # print ('findEmptyCorner -1,1')
-        return -1, -1   
+        return -1,-1   
 
-def normalPlay(board):
+def normalPlay(board): #naive approach
     if isOpen(board,1,1):
         print("center")
         return 1,1
@@ -95,13 +94,26 @@ def normalPlay(board):
         if (row<0 or line<0):
             print("Side")
             row, line = findEmptySide(board)
+        return row, line
+
+def strategicPlay(board,diagonals): #smarter approach - dealing with the specific strategy of 3 corners conquer
+    if isOpen(board,1,1):
+        print("center")
+        return 1,1
+    else:
+        if (diagonals[0]<0 and board[0][0]==-1 and board[2][2]==-1): 
+            # I want to deal with the first time only so theoretically, I should have more restrictions but because of the small board in this game,
+            # the restrictions of winning and not losing will prevent the game from entering here again. 
+           return findEmptySide(board)
+        elif (diagonals[1]<0 and board[0][2]==-1 and board[2][0]==-1):
+           return findEmptySide(board)
         else:
-            return row, line
+            return normalPlay(board)
+
 
 def playRound(board, playerInput, rows, lines, diagonals):
     rowNum = int(playerInput[0])
     lineNum = int(playerInput[1])
-    print(rowNum, lineNum)
     if isOpen(board, rowNum,lineNum):
         print(isOpen)
         board[rowNum][lineNum] = -1
@@ -115,7 +127,6 @@ def playRound(board, playerInput, rows, lines, diagonals):
             printBoard(board)
             return 1
         else:
-            print("no more steps to play")
             printBoard(board)
             return 0
     else:
