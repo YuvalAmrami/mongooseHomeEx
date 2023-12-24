@@ -14,7 +14,7 @@ def updateboardAIInfo(RowNum,LineNum,playerOrAi, rows, lines, diagonals): # play
 
 
 def calculateStep(board, rows, lines, diagonals): # return AIRow, AILine
-    # wining next round or prevent player's Win:
+    # winning the next round or preventing the player from winning
     for idx, diagonal in enumerate(diagonals):
         if (diagonal >=2 or diagonal <=-2):
             return findEmptyPointOnDgnl(board,idx)
@@ -24,7 +24,7 @@ def calculateStep(board, rows, lines, diagonals): # return AIRow, AILine
     for idx, line in enumerate(lines):
         if (line >=2 or line <=-2):
             return findEmptyRow(board,idx) ,idx
-    # normal play naive approach: center, corners, and finally sides
+    # basic play when no win is near
     return strategicPlay(board,diagonals)
 
 def findEmptyPointOnDgnl(board, idx):
@@ -35,7 +35,7 @@ def findEmptyPointOnDgnl(board, idx):
             return 1,1
         elif isOpen(board,2,2):
             return 2,2
-        else:  # the board is already finished
+        else:  # the board is already full
             return -1,-1
     else:
         if isOpen(board,0,2):
@@ -44,7 +44,7 @@ def findEmptyPointOnDgnl(board, idx):
             return 1,1
         elif isOpen(board,2,0):
             return 2,0
-        else:  # the board is already finished
+        else:  # the board is already full
             return -1,-1
 
 def findEmptyLine(board,idx):
@@ -60,7 +60,6 @@ def findEmptyRow(board,idx):
     return -1
 
 def findEmptyCorner(board):
-    # print ('findEmptyCorner')
     if isOpen(board,0,0):
         return 0,0
     elif isOpen(board,0,2):
@@ -86,13 +85,13 @@ def findEmptySide(board):
 
 def normalPlay(board): #naive approach
     if isOpen(board,1,1):
-        print("center")
+        # print("center")
         return 1,1
     else:
-        print("Corner")
+        # print("Corner")
         row, line = findEmptyCorner(board)
         if (row<0 or line<0):
-            print("Side")
+            # print("Side")
             row, line = findEmptySide(board)
         return row, line
 
@@ -102,7 +101,7 @@ def strategicPlay(board,diagonals): #smarter approach - dealing with the specifi
         return 1,1
     else:
         if (diagonals[0]<0 and board[0][0]==-1 and board[2][2]==-1): 
-            # I want to deal with the first time only so theoretically, I should have more restrictions but because of the small board in this game,
+            # I want to deal with the first time only, so theoretically I should have more restrictions. but because of the small board in this game,
             # the restrictions of winning and not losing will prevent the game from entering here again. 
            return findEmptySide(board)
         elif (diagonals[1]<0 and board[0][2]==-1 and board[2][0]==-1):
@@ -111,14 +110,14 @@ def strategicPlay(board,diagonals): #smarter approach - dealing with the specifi
             return normalPlay(board)
 
 
-def playRound(board, playerInput, rows, lines, diagonals):
+def playRound(playerInput, board, rows, lines, diagonals):
     rowNum = int(playerInput[0])
     lineNum = int(playerInput[1])
     if isOpen(board, rowNum,lineNum):
         print(isOpen)
         board[rowNum][lineNum] = -1
-        printBoard(board)
         updateboardAIInfo(rowNum,lineNum ,-1, rows, lines, diagonals) 
+        printBoard(board)
         AIRow, AILine = calculateStep(board, rows, lines, diagonals)
         print("AIRow, AILine ", AIRow, AILine)
         if (AIRow>=0 and AILine>=0):
@@ -159,6 +158,6 @@ diagonals = [0,0]
 printBoard(board)
 playerMove = input("Enter your next move (row,line): ").split(",")
 
-while (playRound(board, playerMove, rows, lines, diagonals)!=0 and not gameEnded(rows, lines, diagonals) ):
+while (playRound(playerMove, board, rows, lines, diagonals)!=0 and not gameEnded(rows, lines, diagonals) ):
     playerMove = input("Enter your next move (row,line): ").split(",")
 print("game ended")

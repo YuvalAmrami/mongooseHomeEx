@@ -9,7 +9,7 @@ def dealCards(numOfCards2Deal,usedCardsInDeck):
     DeltCards=[]
     i = 0
     while (i <numOfCards2Deal):
-        cardNum = random.randint(2,14) # an ase is represented by 14
+        cardNum = random.randint(2,14) # an ace is represented by 14
         cardColor = random.randint(1,4) # Heart, Diamonds, Clubs, Spades
         card = [cardNum,cardColor]
         if not(card in usedCardsInDeck):
@@ -32,7 +32,7 @@ def findNumberOfUsedLosingCards(card, sortedKnownCards): # all the cards that ar
     indexOfCard = sortedKnownCards.index(card) # must be in because init part
     while ((indexOfCard>0) and sortedKnownCards[indexOfCard-1][0]==card[0]): # in case there were other cards with the same value and other colors
         indexOfCard = indexOfCard-1
-    return indexOfCard # because it is sorted all smaller that crd will be to the left of it
+    return indexOfCard # because it is sorted all smaller cards will be to the left of it and the number of them will be this index
 
 
 # full game:
@@ -43,13 +43,13 @@ playerBPoints = 0
 knownCards = list(deckA)
 knownCards.sort()
 print("deckA ", deckA)
-print("deckB ", deckB)
-print("usedCardsInDeck ", usedCards)
+# print("deckB ", deckB)
+# print("usedCardsInDeck ", usedCards)
 
 for i in range(len(deckA)):
     card = deckA.pop()
     print("card: ", card)
-    print("win percentage for current card: ", round(winChancePercentage(card,knownCards),2),"%")
+    print("win chances for current card: ", round(winChancePercentage(card,knownCards),2),"%")
     BCard = deckB.pop()
     print("B card: ", BCard)
     knownCards.append(BCard)
@@ -97,7 +97,7 @@ else:
 #     return (round(winChancePercentage([14,2],knownCards),2)==97.96)
 
 # def test7():
-#     knownCards =[[13,2],[14,3]] # unknown Card:50 out of them 47 will loss to ase of Clubs
+#     knownCards =[[13,2],[14,3]] # unknown Card:50 out of them 47 will lose to ace of Clubs
 #     return (round(winChancePercentage([14,3],knownCards),2)==94)
 
 
